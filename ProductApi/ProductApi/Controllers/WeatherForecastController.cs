@@ -26,6 +26,9 @@ namespace ProductApi.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get a specific TodoItem.
+        /// </summary>
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

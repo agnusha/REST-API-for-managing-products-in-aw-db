@@ -37,6 +37,12 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "dependencies": {
+            "Swashbuckle": {
+              "target": "Package",
+              "version": "[5.6.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

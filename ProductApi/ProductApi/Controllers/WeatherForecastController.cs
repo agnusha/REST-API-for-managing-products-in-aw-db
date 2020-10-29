@@ -9,6 +9,9 @@ namespace ProductApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    /// <summary>
+    /// Weather Controller responsible for GET/POST for managing weather
+    /// </summary>
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

@@ -17,14 +17,6 @@ namespace ProductApi.Models
 
         public virtual DbSet<Product> Product { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=tcp:aw-vm-sql-server.database.windows.net,1433;Initial Catalog=AdventureWorks2019;Persist Security Info=False;User ID=agnia;Password=Epam2020Create;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>(entity =>

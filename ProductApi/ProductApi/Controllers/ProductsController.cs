@@ -9,6 +9,9 @@ using ProductApi.Models;
 
 namespace ProductApi.Controllers
 {
+    /// <summary>
+    /// ProductsController responsible for GET/POST for managing products
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase

@@ -14,11 +14,11 @@ namespace ProductApi
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
-            //Initialize Logger
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
                 .CreateLogger();
@@ -35,11 +35,14 @@ namespace ProductApi
             {
                 Log.CloseAndFlush();
             }
+
+            CreateHostBuilder(args).Build().Run();
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog() //Uses Serilog instead of default .NET Logger
+                .UseSerilog() 
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

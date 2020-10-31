@@ -23,14 +23,18 @@ namespace ProductApi.Controllers
             _context = context;
         }
 
-        // GET: api/Products
+        /// <summary>
+        /// GET: api/Products
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
             return await _context.Product.ToListAsync();
         }
 
-        // GET: api/Products/5
+        /// <summary>
+        /// GET: api/Products/5
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -44,7 +48,9 @@ namespace ProductApi.Controllers
             return product;
         }
 
-        // PUT: api/Products/5
+        /// <summary>
+        /// PUT: api/Products/5
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {

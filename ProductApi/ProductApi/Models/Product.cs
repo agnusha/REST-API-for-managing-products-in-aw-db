@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ProductApi.Models
 {
+    [ExcludeFromCodeCoverage]
+
     public partial class Product
     {
         public int ProductId { get; set; }

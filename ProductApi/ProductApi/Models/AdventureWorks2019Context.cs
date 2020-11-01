@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ProductApi.Models
 {
+    [ExcludeFromCodeCoverage]
     public partial class AdventureWorks2019Context : DbContext
     {
         public AdventureWorks2019Context()

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,6 +37,11 @@ namespace ProductApi
             services.AddDbContext<AdventureWorks2019Context>(options =>
                 options.UseSqlServer(connection));
 
+            services.AddSingleton(sp =>
+            {
+                var stAccConnectionString = Configuration.GetConnectionString("StorageAccount");
+                return new BlobServiceClient(stAccConnectionString);
+            });
 
             services.AddSwaggerGen(options =>
             {

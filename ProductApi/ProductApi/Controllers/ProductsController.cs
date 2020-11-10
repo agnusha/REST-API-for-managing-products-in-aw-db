@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +20,12 @@ namespace ProductApi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly AdventureWorks2019Context _context;
+        private readonly BlobServiceClient _blobServiceClient;
 
-        public ProductsController(AdventureWorks2019Context context)
+        public ProductsController(AdventureWorks2019Context context, BlobServiceClient blobServiceClient)
         {
             _context = context;
+            _blobServiceClient = blobServiceClient;
         }
 
         /// <summary>
@@ -46,6 +51,19 @@ namespace ProductApi.Controllers
             }
 
             return product;
+        }
+
+        /// <summary>
+        /// Upload files to Azure blob, and add a notification with all necessary information to Azure queue
+        /// </summary>
+        [HttpPost("file")]
+        public async Task<IActionResult> UploadFiles(IFormFile file)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient("awfilecontainer");
+            var blobClient = containerClient.GetBlobClient(file.FileName);
+            await blobClient.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = file.ContentType });
+            var uri = blobClient.Uri;
+            return NoContent();
         }
 
         /// <summary>

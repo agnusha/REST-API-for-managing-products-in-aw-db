@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProductApi.Models;
+using Azure.Storage.Queues; 
 
 namespace ProductApi
 {
@@ -41,6 +40,12 @@ namespace ProductApi
             {
                 var stAccConnectionString = Configuration.GetConnectionString("StorageAccount");
                 return new BlobServiceClient(stAccConnectionString);
+            });
+
+            services.AddSingleton(sp =>
+            {
+                var stAccConnectionString = Configuration.GetConnectionString("StorageAccount");
+                return new QueueClient(stAccConnectionString, "awfilequeue");
             });
 
             services.AddSwaggerGen(options =>

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Queues;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +23,14 @@ namespace ProductApi.Controllers
     {
         private readonly AdventureWorks2019Context _context;
         private readonly BlobServiceClient _blobServiceClient;
+        private readonly QueueClient _queueClient;
 
-        public ProductsController(AdventureWorks2019Context context, BlobServiceClient blobServiceClient)
+
+        public ProductsController(AdventureWorks2019Context context, BlobServiceClient blobServiceClient, QueueClient queueClient)
         {
             _context = context;
             _blobServiceClient = blobServiceClient;
+            _queueClient = queueClient;
         }
 
         /// <summary>
@@ -62,7 +67,13 @@ namespace ProductApi.Controllers
             var containerClient = _blobServiceClient.GetBlobContainerClient("awfilecontainer");
             var blobClient = containerClient.GetBlobClient(file.FileName);
             await blobClient.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = file.ContentType });
-            var uri = blobClient.Uri;
+
+            await _queueClient.CreateIfNotExistsAsync();
+            if (await _queueClient.ExistsAsync())
+            {
+                await _queueClient.SendMessageAsync($"Save file {file.FileName} to azure blob filename {blobClient.Name} with metadata - ContentType {file.ContentType}.");
+            }
+
             return NoContent();
         }
 

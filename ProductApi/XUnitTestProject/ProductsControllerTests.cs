@@ -35,7 +35,7 @@ namespace XUnitTestProject
 
             using (var context = new AdventureWorks2019Context(options))
             {
-                ProductsController controller = new ProductsController(context);
+                ProductsController controller = new ProductsController(context, null, null);
                 var result = await controller.GetProduct(12345);
                 var actualResult = result.Value;
 
@@ -55,7 +55,7 @@ namespace XUnitTestProject
 
 
             using var context = new AdventureWorks2019Context(options);
-            ProductsController controller = new ProductsController(context);
+            ProductsController controller = new ProductsController(context, null, null);
             var result = await controller.GetProduct(123456);
             var actualResult = result.Result;
             var actualValue = result.Value;

@@ -21,6 +21,7 @@
 		<PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
 		<PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="5.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
 	</ItemGroup>
 
 	<PropertyGroup>

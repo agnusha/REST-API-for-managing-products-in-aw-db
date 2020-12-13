@@ -8,10 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProductApi.Models;
-using Azure.Storage.Queues; 
+using Azure.Storage.Queues;
 
 namespace ProductApi
 {
@@ -35,13 +34,13 @@ namespace ProductApi
 
             services.AddSingleton(sp =>
             {
-                var stAccConnectionString = Configuration.GetConnectionString("StorageAccount");
+                var stAccConnectionString = Configuration["StorageAccountConnectionString"];
                 return new BlobServiceClient(stAccConnectionString);
             });
 
             services.AddSingleton(sp =>
             {
-                var stAccConnectionString = Configuration.GetConnectionString("StorageAccount");
+                var stAccConnectionString = Configuration["StorageAccountConnectionString"];
                 return new QueueClient(stAccConnectionString, "awfilequeue");
             });
 

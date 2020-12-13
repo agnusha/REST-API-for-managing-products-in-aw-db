@@ -32,7 +32,7 @@ namespace ProductApi
             services.AddControllers();
             services.AddMvc();
 
-            string connection = Configuration.GetConnectionString("Entities");
+            string connection = Configuration["DbConnectionString"];
             services.AddDbContext<AdventureWorks2019Context>(options =>
                 options.UseSqlServer(connection));
 

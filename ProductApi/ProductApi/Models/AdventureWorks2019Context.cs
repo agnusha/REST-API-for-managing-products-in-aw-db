@@ -17,6 +17,7 @@ namespace ProductApi.Models
 
         public virtual DbSet<Product> Product { get; set; }
 
+        [System.Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>(entity =>

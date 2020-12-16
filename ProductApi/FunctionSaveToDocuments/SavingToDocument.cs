@@ -22,29 +22,6 @@ namespace FunctionSaveToDocuments
             _context = context;
         }
 
-        public async Task<Document> PostDocument(Document document)
-        {
-            await _context.Documents.AddAsync(document);
-            await _context.SaveChangesAsync();
-            return document;
-        }
-
-        public static async Task<byte[]> DownloadFileFromBlobAsync(string blobReferenceKey)
-        {
-            var connectionString = ConfigurationManager.AppSettings["Queuetriggerconnectionstring"];
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference("awfilecontainer");
-            var blockBlob = container.GetBlockBlobReference(blobReferenceKey);
-            using var ms = new MemoryStream();
-            if (await blockBlob.ExistsAsync())
-            {
-                await blockBlob.DownloadToStreamAsync(ms);
-            }
-            return ms.ToArray();
-        }
-
-
         [FunctionName("FunctionSaveToDocument")]
         public static async Task RunAsync([QueueTrigger("awfilequeue", Connection = "Queuetriggerconnectionstring")]string myQueueItem, ILogger log)
         {
@@ -78,5 +55,28 @@ namespace FunctionSaveToDocuments
                 Console.WriteLine(bytes.Length);
             }
         }
+
+        private async Task<Document> PostDocument(Document document)
+        {
+            await _context.Documents.AddAsync(document);
+            await _context.SaveChangesAsync();
+            return document;
+        }
+
+        private static async Task<byte[]> DownloadFileFromBlobAsync(string blobReferenceKey)
+        {
+            var connectionString = ConfigurationManager.AppSettings["Queuetriggerconnectionstring"];
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference("awfilecontainer");
+            var blockBlob = container.GetBlockBlobReference(blobReferenceKey);
+            using var ms = new MemoryStream();
+            if (await blockBlob.ExistsAsync())
+            {
+                await blockBlob.DownloadToStreamAsync(ms);
+            }
+            return ms.ToArray();
+        }
+
     }
 }

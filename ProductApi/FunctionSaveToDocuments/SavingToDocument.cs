@@ -5,11 +5,29 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using System.Threading.Tasks;
 using System.Configuration;
+using FunctionSaveToDocuments.Models;
 
 namespace FunctionSaveToDocuments
 {
-    public static class SavingToDocument
+    //Is triggered by notification in Azure Queue
+    //Get file name from notification
+    //Get file content from Azure Blob
+    //Save file to DB Document table
+    
+    public class SavingToDocument
     {
+        private readonly AdventureWorks2019Context _context;
+        public SavingToDocument(AdventureWorks2019Context context)
+        {
+            _context = context;
+        }
+
+        public async Task<Document> PostDocument(Document document)
+        {
+            await _context.Documents.AddAsync(document);
+            await _context.SaveChangesAsync();
+            return document;
+        }
 
         public static async Task<byte[]> DownloadFileFromBlobAsync(string blobReferenceKey)
         {

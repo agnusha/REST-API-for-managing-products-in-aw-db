@@ -16,8 +16,8 @@ namespace FunctionSaveToDocuments
     
     public class SavingToDocument
     {
-        private readonly AdventureWorks2019Context _context;
-        public SavingToDocument(AdventureWorks2019Context context)
+        private readonly AdventureWorksFuncContext _context;
+        public SavingToDocument(AdventureWorksFuncContext context)
         {
             _context = context;
         }

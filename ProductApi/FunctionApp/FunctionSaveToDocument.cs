@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using FunctionApp.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
 
 namespace FunctionApp
 {
@@ -19,10 +21,19 @@ namespace FunctionApp
         {
             try
             {
+                // will get it from message
+                var name = "photo_2020-10-06_21-13-41.jpg";
+
                 log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
 
-                var countInsertDocument = await InsertDocument();
+                var doc = new TDocument("title", "name", "ext", "summary");
+                
+                var bytes = await DownloadFileFromBlobAsync(name);
+                doc.Document = bytes;
+
+                var countInsertDocument = await InsertDocument(doc);
                 log.LogInformation("Add docs: {0}", countInsertDocument);
+
             }
             catch (Exception e)
             {
@@ -31,29 +42,39 @@ namespace FunctionApp
             }
         }
 
-        private static async Task<int> InsertDocument(/*Document document*/)
+        private static async Task<int> InsertDocument(TDocument document)
         {
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:DbConnectionString");
             const string sqlExpression =
-                "INSERT INTO Production.Document (DocumentNode, Title, Owner, FolderFlag, FileName, FileExtension, Revision, ChangeNumber, Status, DocumentSummary) VALUES " +
+                "INSERT INTO Production.Document (DocumentNode, Title, Owner, FolderFlag, FileName, FileExtension, Revision, ChangeNumber, Status, DocumentSummary, Document) VALUES " +
                 "('/'+CAST((select count(DocumentNode) from Production.Document) AS VARCHAR(10))+'/', " +
-                "@Title, @Owner, @FolderFlag, @FileName, @FileExtension, @Revision, @ChangeNumber, @Status, @DocumentSummary)";
+                "@Title, 220, 1, @FileName, @FileExtension, 0, 0, 1, @DocumentSummary, @Document)";
 
             await using var connection = new SqlConnection(connectionString);
             connection.Open();
             var command = new SqlCommand(sqlExpression, connection);
 
-            command.Parameters.AddWithValue("@Title", "hey 3");
-            command.Parameters.AddWithValue("@Owner", 220);
-            command.Parameters.AddWithValue("@FolderFlag", 1);
-            command.Parameters.AddWithValue("@FileName", "test code");
-            command.Parameters.AddWithValue("@FileExtension", ".txt");
-            command.Parameters.AddWithValue("@Revision", 0);
-            command.Parameters.AddWithValue("@ChangeNumber", 0);
-            command.Parameters.AddWithValue("@Status", 1);
-            command.Parameters.AddWithValue("@DocumentSummary", "DocumentSummary");
-            //command.Parameters.AddWithValue("@Document", value2);
+            command.Parameters.AddWithValue("@Title", document.Title);
+            command.Parameters.AddWithValue("@FileName", document.FileName);
+            command.Parameters.AddWithValue("@FileExtension", document.FileExtension);
+            command.Parameters.AddWithValue("@DocumentSummary", document.DocumentSummary);
+            command.Parameters.AddWithValue("@Document",  document.Document);
             return command.ExecuteNonQuery();
+        }
+
+        private static async Task<byte[]> DownloadFileFromBlobAsync(string blobReferenceKey)
+        {
+            var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:CloudStorageAccountConnectionString");
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference("awfilecontainer");
+            var blockBlob = container.GetBlockBlobReference(blobReferenceKey);
+            await using var ms = new MemoryStream();
+            if (await blockBlob.ExistsAsync())
+            {
+                await blockBlob.DownloadToStreamAsync(ms);
+            }
+            return ms.ToArray();
         }
     }
 }

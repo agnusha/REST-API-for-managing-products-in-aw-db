@@ -2,8 +2,16 @@
 
 namespace FunctionApp.Models
 {
-    public partial class Document
+    public class TDocument
     {
+        public TDocument(string title, string fileName, string fileExtension, string documentSummary)
+        {
+            Title = title;
+            FileName = fileName;
+            FileExtension = fileExtension;
+            DocumentSummary = documentSummary;
+        }
+
         public string DocumentNode { get; set; }
         public short? DocumentLevel { get; set; }
         public string Title { get; set; }
@@ -15,7 +23,7 @@ namespace FunctionApp.Models
         public int ChangeNumber { get; set; }
         public byte Status { get; set; }
         public string DocumentSummary { get; set; }
-        public byte[] Document1 { get; set; }
+        public byte[] Document { get; set; }
         public Guid Rowguid { get; set; }
         public DateTime ModifiedDate { get; set; }
     }

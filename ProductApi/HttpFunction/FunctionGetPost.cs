@@ -38,7 +38,7 @@ namespace HttpFunction
                             return new NotFoundObjectResult(document);
                         }
 
-                        log.LogInformation("Function (POST) returned document successfully.");
+                        log.LogInformation("Function (GET) returned document successfully.");
                         var result = new FileContentResult(document, "application/octet-stream") { FileDownloadName = fileName };
                         return result;
                     }

@@ -21,18 +21,21 @@ namespace FunctionApp
         {
             try
             {
-                // will get it from message
-                var name = "photo_2020-10-06_21-13-41.jpg";
-
-                log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
-
-                var doc = new TDocument("title", "name", "ext", "summary");
+                log.LogInformation($"C# Queue trigger function processed for message: {myQueueItem}");
                 
-                var bytes = await DownloadFileFromBlobAsync(name);
-                doc.Document = bytes;
+                var fileName = myQueueItem.Split(new[] { ' ' })[2];
+                var bytes = await DownloadFileFromBlobAsync(fileName);
+
+                var doc = new TDocument(fileName, fileName.Split(new[] { '.' })[1])
+                {
+                    Title = fileName.Split(new[] { '.' })[0],
+                    DocumentSummary = "Saved by azure function",
+                    Document = bytes,
+                };
 
                 var countInsertDocument = await InsertDocument(doc);
-                log.LogInformation("Add docs: {0}", countInsertDocument);
+
+                log.LogInformation("Add docs to database: {0}", countInsertDocument);
 
             }
             catch (Exception e)

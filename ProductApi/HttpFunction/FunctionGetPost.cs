@@ -23,7 +23,6 @@ namespace HttpFunction
             string name = req.Query["name"];
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
 
             switch (req.Method)
             {
@@ -34,9 +33,11 @@ namespace HttpFunction
                     
                     if (document == null || document.Length == 0 || string.IsNullOrEmpty(fileName))
                     {
-                        return new NotFoundObjectResult(document);
+                            log.LogInformation("Document doesn't exist.");
+                            return new NotFoundObjectResult(document);
                     }
-
+                    
+                    log.LogInformation("Function returned document successfully."); 
                     var result = new FileContentResult(document, "application/octet-stream") { FileDownloadName = fileName };
                     return result;
                 }

@@ -70,11 +70,12 @@ namespace ProductApi.Controllers
             await _queueClient.CreateIfNotExistsAsync();
             if (await _queueClient.ExistsAsync())
             {
-                await _queueClient.SendMessageAsync($"Save file {file.FileName} to azure blob filename {blobClient.Name} with metadata - ContentType {file.ContentType}.");
+                await _queueClient.SendMessageAsync(Base64Encode($"Save file {blobClient.Name} with metadata - ContentType {file.ContentType}."));
             }
 
             return NoContent();
         }
+
 
         /// <summary>
         /// PUT: api/Products/5
@@ -137,6 +138,12 @@ namespace ProductApi.Controllers
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.ProductId == id);
+        }
+
+        private static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
         }
     }
 }

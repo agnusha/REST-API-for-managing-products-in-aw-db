@@ -4,12 +4,10 @@ namespace FunctionApp.Models
 {
     public class TDocument
     {
-        public TDocument(string title, string fileName, string fileExtension, string documentSummary)
+        public TDocument(string fileName, string fileExtension)
         {
-            Title = title;
             FileName = fileName;
             FileExtension = fileExtension;
-            DocumentSummary = documentSummary;
         }
 
         public string DocumentNode { get; set; }
